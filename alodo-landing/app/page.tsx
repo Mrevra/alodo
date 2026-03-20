@@ -1,258 +1,311 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { 
-  ArrowRight, 
   Smartphone, 
   Calculator, 
   Target, 
-  UserCheck, 
-  Mail, 
-  MapPin, 
-  Phone 
+  UserCheck,
+  ChevronRight,
 } from "lucide-react"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen font-sans bg-white">
-      {/* Hero Section */}
-      <section className="py-24 bg-cyan-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <Badge className="bg-amber-500 text-white mb-4 px-4 py-1 text-sm font-semibold border-none">Innovation Hackathon 2026</Badge>
-            <h1 className="text-5xl md:text-7xl font-serif font-black text-gray-900 mb-6 leading-tight">
-              Alɔdó : Propulser les <span className="text-cyan-600">MPME au Bénin</span>
+    <div className="min-h-screen bg-white text-gray-800">
+
+      {/* =========================================================
+          HERO SECTION
+      ========================================================= */}
+      <section className="bg-white pt-12 pb-20">
+        <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
+
+          {/* Brand Title */}
+          <div>
+            <h1 className="text-5xl md:text-6xl font-serif font-black text-[#1a3c6b] mb-3 tracking-tight">
+              Alɔdó
             </h1>
-            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto font-sans leading-relaxed">
-              Transformer chaque activité économique informelle en opportunité de croissance et d'accès au financement grâce à une technologie accessible et humaine.
+            {/* Bénin Flag Bar */}
+            <div className="flex justify-center items-center gap-0 mx-auto w-48 h-2 rounded-full overflow-hidden">
+              <div className="flex-1 h-full bg-[#008751]" />
+              <div className="flex-1 h-full bg-[#FCD116]" />
+              <div className="flex-1 h-full bg-[#E8112D]" />
+            </div>
+          </div>
+
+          {/* Tagline */}
+          <div className="space-y-2">
+            <p className="text-2xl md:text-3xl font-serif font-bold text-gray-800">
+              Un accès unique, une inclusion financière totale
             </p>
-            <div className="flex justify-center gap-4">
-              <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 h-12 rounded-lg">
-                Découvrir nos solutions
+            <p className="text-lg text-gray-500 font-sans max-w-2xl mx-auto">
+              Votre portail pour la formalisation et la croissance des MPME au Bénin.
+            </p>
+          </div>
+
+          {/* CTA Buttons — EducMaster style: full-width dark navy */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto pt-4">
+            <Link href="#solutions" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full h-14 px-8 text-base font-bold bg-[#1a3c6b] hover:bg-[#14305a] text-white rounded-md border-none shadow-md flex items-center gap-3"
+              >
+                <Smartphone className="h-5 w-5" />
+                Accéder aux Solutions
               </Button>
-              <Button variant="outline" size="lg" className="border-cyan-600 text-cyan-600 hover:bg-cyan-50 px-8 h-12 rounded-lg">
-                Notre Vision
+            </Link>
+            <Link href="#context" className="w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full h-14 px-8 text-base font-bold border-2 border-[#1a3c6b] text-[#1a3c6b] hover:bg-[#1a3c6b]/5 rounded-md shadow-md flex items-center gap-3"
+              >
+                <ChevronRight className="h-5 w-5" />
+                En savoir plus
               </Button>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Context & Problem Section */}
-      <section id="context" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-4xl font-serif font-black text-gray-900 mb-6">Le défi des MPME béninoises</h2>
-              <div className="space-y-6 text-lg text-gray-600 font-sans">
-                <p>
-                  Au Bénin, les Micro, Petites et Moyennes Entreprises (MPME) constituent le cœur de notre économie, mais font face à des barrières structurelles majeures :
-                </p>
-                <ul className="space-y-4">
-                  <li className="flex gap-3 items-start">
-                    <span className="text-amber-500 font-bold mt-1">✓</span>
-                    <span>Manque d'informations fiables sur les marchés locaux.</span>
-                  </li>
-                  <li className="flex gap-3 items-start">
-                    <span className="text-amber-500 font-bold mt-1">✓</span>
-                    <span>Absence de comptabilité formelle et de preuves de viabilité.</span>
-                  </li>
-                  <li className="flex gap-3 items-start">
-                    <span className="text-amber-500 font-bold mt-1">✓</span>
-                    <span>Accès limité aux outils de financement adaptés.</span>
-                  </li>
-                  <li className="flex gap-3 items-start">
-                    <span className="text-amber-500 font-bold mt-1">✓</span>
-                    <span>Faible niveau de formalisation administrative.</span>
-                  </li>
-                </ul>
-              </div>
+
+
+      {/* =========================================================
+          CONTEXTE SECTION
+      ========================================================= */}
+      <section id="context" className="py-20 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif font-bold text-[#1a3c6b]">Le défi des MPME béninoises</h2>
+            <div className="flex justify-center mt-3 gap-0 w-24 h-1 mx-auto rounded overflow-hidden">
+              <div className="flex-1 bg-[#008751]" />
+              <div className="flex-1 bg-[#FCD116]" />
+              <div className="flex-1 bg-[#E8112D]" />
             </div>
-            <div className="bg-cyan-900 rounded-3xl p-10 text-white shadow-xl">
-              <h3 className="text-3xl font-serif font-black mb-6">Notre Mission</h3>
-              <p className="text-xl text-cyan-50 font-sans leading-relaxed">
-                "Réduire les barrières entre l'économie informelle et le système financier formel en combinant technologie accessible et action de proximité."
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            <div className="space-y-5 text-base text-gray-600 font-sans leading-relaxed">
+              <p>
+                Au Bénin, les MPME représentent plus de <strong className="text-[#1a3c6b]">80%</strong> du tissu économique, mais restent exclues du système financier formel à cause de barrières structurelles :
               </p>
-              <div className="mt-8 flex items-center gap-4">
-                <div className="w-12 h-1 bg-amber-500 rounded-full"></div>
-                <span className="text-amber-500 font-bold tracking-widest uppercase text-sm">Approche Hybride</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Solutions Section */}
-      <section id="solutions" className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-serif font-black text-gray-900 leading-tight">Nos Solutions Hybrides</h2>
-            <p className="text-xl text-gray-600 mt-4">Un écosystème complet pour l'inclusion financière.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* P1: Information Sectorielle */}
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="pt-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 mx-auto mb-4">
-                  <Smartphone className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-serif font-bold text-gray-900">Information Sectorielle</h3>
-                <p className="text-gray-600 font-sans text-sm leading-relaxed">
-                  Alertes personnalisées et recommandations concrètes via SMS & WhatsApp, langues locales.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* P2: Gestion Comptable */}
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow bg-amber-50">
-              <CardContent className="pt-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-amber-200 flex items-center justify-center text-amber-700 mx-auto mb-4">
-                  <Calculator className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-serif font-bold text-gray-900">Gestion Comptable</h3>
-                <p className="text-gray-600 font-sans text-sm leading-relaxed">
-                  Un boîtier physique ultra-simple pour enregistrer achats/ventes sans smartphone.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* P3: Matching Financement */}
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="pt-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 mx-auto mb-4">
-                  <Target className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-serif font-bold text-gray-900">Matching Financement</h3>
-                <p className="text-gray-600 font-sans text-sm leading-relaxed">
-                  Centralisation intelligente des offres de banques et IMF adaptées à votre profil.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* P4: Aide à la Formalisation */}
-            <Card className="border-none shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="pt-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-600 mx-auto mb-4">
-                  <UserCheck className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-serif font-bold text-gray-900">Aide à la Formalisation</h3>
-                <p className="text-gray-600 font-sans text-sm leading-relaxed">
-                  Assistant digital et humain pour accompagner vos démarches administratives.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works Section */}
-      <section id="how-it-works" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-serif font-black text-gray-900">Le Cycle Héroïque Alɔdó</h2>
-            <p className="text-xl text-gray-600 mt-4 font-sans">Comment nous transformons l'économie informelle.</p>
-          </div>
-          <div className="relative">
-            <div className="hidden lg:block absolute top-12 left-0 right-0 h-0.5 bg-cyan-100 z-0"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-              {[
-                { nr: "1", title: "Collecte Terrain", desc: "Via nos boîtiers physiques ou WhatsApp, sans besoin de smartphone." },
-                { nr: "2", title: "Analyse Data", desc: "Traitement intelligent des flux pour générer une comptabilité formelle." },
-                { nr: "3", title: "Profil Scoring", desc: "Création d'un score de crédit fiable basé sur l'activité réelle." },
-                { nr: "4", title: "Accès Capital", desc: "Mise en relation avec les institutions financières pour le déploiement." }
-              ].map((step, i) => (
-                <div key={i} className="space-y-6 relative z-10">
-                  <div className="w-20 h-20 rounded-full bg-cyan-600 text-white flex items-center justify-center mx-auto text-2xl font-black shadow-lg">
-                    {step.nr}
-                  </div>
-                  <h4 className="text-2xl font-serif font-bold text-gray-900">{step.title}</h4>
-                  <p className="text-gray-600 font-sans">{step.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Section */}
-      <section id="impact" className="py-24 bg-cyan-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-6">
-              <h2 className="text-4xl font-serif font-black">Impact attendu & Faisabilité</h2>
-              <p className="text-xl text-cyan-50 font-sans leading-relaxed">
-                Notre solution n'est pas qu'un outil numérique. C'est un changement de paradigme pour l'inclusion financière rurale et urbaine au Bénin.
-              </p>
-              <ul className="space-y-4">
-                <li className="flex gap-3">
-                  <span className="text-amber-500 font-bold">✓</span>
-                  <span>Réduction massive de l'informalité bancaire.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-amber-500 font-bold">✓</span>
-                  <span>Augmentation du taux d'acceptation des crédits MPME.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-amber-500 font-bold">✓</span>
-                  <span>Prise de décision basée sur des données réelles.</span>
-                </li>
+              <ul className="space-y-3 mt-4">
+                {[
+                  "Manque d'informations fiables sur les marchés locaux",
+                  "Absence de comptabilité formelle et de preuves de viabilité",
+                  "Accès limité aux outils de financement adaptés",
+                  "Faible niveau de formalisation administrative",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="mt-1 w-5 h-5 rounded-full bg-[#008751] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="bg-white/10 p-8 rounded-2xl text-center">
-                <div className="text-4xl font-black text-amber-500 mb-2">90%</div>
-                <div className="text-sm uppercase tracking-widest text-cyan-300">Accessibilité (SMS/USSD)</div>
-              </div>
-              <div className="bg-white/10 p-8 rounded-2xl text-center">
-                <div className="text-4xl font-black text-white mb-2">100%</div>
-                <div className="text-sm uppercase tracking-widest text-cyan-300">Offline Capability</div>
-              </div>
-              <div className="bg-white/10 p-8 rounded-2xl text-center">
-                <div className="text-4xl font-black text-amber-500 mb-2">Low</div>
-                <div className="text-sm uppercase tracking-widest text-cyan-300">Hardware Cost</div>
-              </div>
-              <div className="bg-white/10 p-8 rounded-2xl text-center">
-                <div className="text-4xl font-black text-white mb-2">Fast</div>
-                <div className="text-sm uppercase tracking-widest text-cyan-300">Implementation</div>
+
+            <div className="bg-[#1a3c6b] text-white rounded-xl p-8 shadow-lg space-y-4">
+              <h3 className="text-2xl font-serif font-bold">Notre Mission</h3>
+              <div className="w-16 h-1 rounded" style={{background: 'linear-gradient(to right, #008751, #FCD116, #E8112D)'}} />
+              <p className="text-white/80 leading-relaxed text-base">
+                "Réduire les barrières entre l'économie informelle et le système financier formel en combinant technologie accessible et action de proximité."
+              </p>
+              <div className="pt-4 border-t border-white/20">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#FCD116]">Approche Hybride · Bénin</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer id="contact" className="py-24 bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="col-span-1 md:col-span-2">
-              <h3 className="text-3xl font-serif font-black text-cyan-400 mb-6">Alɔdó</h3>
-              <p className="text-gray-400 font-sans text-lg max-w-md leading-relaxed">
-                Innovation hybride pour booster les MPME béninoises. Un pont entre tradition informelle et modernité financière.
+
+
+      {/* =========================================================
+          SOLUTIONS SECTION
+      ========================================================= */}
+      <section id="solutions" className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif font-bold text-[#1a3c6b]">Nos Solutions</h2>
+            <div className="flex justify-center mt-3 gap-0 w-24 h-1 mx-auto rounded overflow-hidden">
+              <div className="flex-1 bg-[#008751]" />
+              <div className="flex-1 bg-[#FCD116]" />
+              <div className="flex-1 bg-[#E8112D]" />
+            </div>
+            <p className="text-gray-500 mt-4 text-base">Un écosystème complet pour l'inclusion financière.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[
+              {
+                icon: Smartphone,
+                title: "Information Sectorielle",
+                desc: "Alertes personnalisées et recommandations concrètes via SMS & WhatsApp en langues locales.",
+                color: "#008751",
+              },
+              {
+                icon: Calculator,
+                title: "Gestion Comptable",
+                desc: "Un boîtier physique ultra-simple à 4 touches pour enregistrer achats/ventes sans smartphone.",
+                color: "#1a3c6b",
+              },
+              {
+                icon: Target,
+                title: "Matching Financement",
+                desc: "Centralisation intelligente des offres de banques et IMF adaptées à votre profil réel.",
+                color: "#E8112D",
+              },
+              {
+                icon: UserCheck,
+                title: "Aide à la Formalisation",
+                desc: "Assistant digital et humain pour accompagner vos démarches administratives.",
+                color: "#FCD116",
+              },
+            ].map(({ icon: Icon, title, desc, color }, i) => (
+              <Card key={i} className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-xl overflow-hidden">
+                <CardContent className="p-6 space-y-3">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: color + '18', color }}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-lg font-serif font-bold text-[#1a3c6b]">{title}</h3>
+                  </div>
+                  <p className="text-gray-500 text-sm leading-relaxed pl-16">{desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* =========================================================
+          FONCTIONNEMENT SECTION
+      ========================================================= */}
+      <section id="how-it-works" className="py-20 bg-gray-50">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif font-bold text-[#1a3c6b]">Le Cycle Héroïque Alɔdó</h2>
+            <div className="flex justify-center mt-3 gap-0 w-24 h-1 mx-auto rounded overflow-hidden">
+              <div className="flex-1 bg-[#008751]" />
+              <div className="flex-1 bg-[#FCD116]" />
+              <div className="flex-1 bg-[#E8112D]" />
+            </div>
+            <p className="text-gray-500 mt-4 text-base">Comment nous transformons l'économie informelle.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { nr: "1", title: "Collecte Terrain", desc: "Via nos boîtiers physiques ou WhatsApp, sans smartphone." },
+              { nr: "2", title: "Analyse Data", desc: "Traitement des flux pour générer une comptabilité formelle." },
+              { nr: "3", title: "Profil Scoring", desc: "Score de crédit fiable basé sur l'activité réelle." },
+              { nr: "4", title: "Accès Capital", desc: "Mise en relation avec les institutions financières." },
+            ].map((step, i) => (
+              <div key={i} className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#1a3c6b] text-white flex items-center justify-center text-2xl font-black shadow-md">
+                  {step.nr}
+                </div>
+                <h4 className="text-base font-serif font-bold text-[#1a3c6b]">{step.title}</h4>
+                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* =========================================================
+          IMPACT SECTION
+      ========================================================= */}
+      <section id="impact" className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-serif font-bold text-[#1a3c6b]">Impact & Faisabilité</h2>
+            <div className="flex justify-center mt-3 gap-0 w-24 h-1 mx-auto rounded overflow-hidden">
+              <div className="flex-1 bg-[#008751]" />
+              <div className="flex-1 bg-[#FCD116]" />
+              <div className="flex-1 bg-[#E8112D]" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { value: "90%", label: "Accessible (SMS/USSD)", accent: "#008751" },
+              { value: "100%", label: "Offline Capability", accent: "#1a3c6b" },
+              { value: "Faible", label: "Coût Hardware", accent: "#E8112D" },
+              { value: "Rapide", label: "Déploiement", accent: "#FCD116" },
+            ].map(({ value, label, accent }, i) => (
+              <div key={i} className="border border-gray-200 rounded-xl p-6 text-center shadow-sm">
+                <div className="text-3xl font-black mb-2" style={{ color: accent }}>{value}</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide font-bold">{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 bg-gray-50 border border-gray-200 rounded-xl p-8 space-y-4">
+            <p className="text-base text-gray-600 leading-relaxed text-center">
+              Notre solution n'est pas qu'un outil numérique. C'est un <strong className="text-[#1a3c6b]">changement de paradigme</strong> pour l'inclusion financière rurale et urbaine au Bénin.
+            </p>
+            <div className="flex justify-center pt-4">
+              <Link href="#contact">
+                <Button
+                  size="lg"
+                  className="h-14 px-10 text-base font-bold bg-[#1a3c6b] hover:bg-[#14305a] text-white rounded-md border-none shadow-md"
+                >
+                  Accompagner l'Innovation
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          FOOTER
+      ========================================================= */}
+
+
+      <footer id="contact" className="bg-[#1a3c6b] text-white py-16">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-serif font-black">Alɔdó</h3>
+              <div className="flex gap-0 w-20 h-1 rounded overflow-hidden">
+                <div className="flex-1 bg-[#008751]" />
+                <div className="flex-1 bg-[#FCD116]" />
+                <div className="flex-1 bg-[#E8112D]" />
+              </div>
+              <p className="text-white/70 text-sm leading-relaxed">
+                Innovation hybride pour booster les MPME béninoises.
               </p>
             </div>
-            <div>
-              <h4 className="text-xl font-serif font-bold mb-6">Navigation</h4>
-              <nav className="flex flex-col space-y-4 text-gray-400 font-sans">
-                <Link href="#context" className="hover:text-cyan-400 transition-colors">Contexte</Link>
-                <Link href="#solutions" className="hover:text-cyan-400 transition-colors">Solutions</Link>
-                <Link href="#how-it-works" className="hover:text-cyan-400 transition-colors">Fonctionnement</Link>
+
+            <div className="space-y-4">
+              <h4 className="font-serif font-bold uppercase tracking-wider text-sm text-[#FCD116]">Navigation</h4>
+              <nav className="flex flex-col space-y-3 text-white/70 text-sm">
+                <Link href="#context" className="hover:text-white transition-colors">Contexte</Link>
+                <Link href="#solutions" className="hover:text-white transition-colors">Solutions</Link>
+                <Link href="#how-it-works" className="hover:text-white transition-colors">Fonctionnement</Link>
+                <Link href="#impact" className="hover:text-white transition-colors">Impact</Link>
               </nav>
             </div>
-            <div>
-              <h4 className="text-xl font-serif font-bold mb-6">Contact</h4>
-              <div className="space-y-4 text-gray-400 font-sans text-lg">
+
+            <div className="space-y-4">
+              <h4 className="font-serif font-bold uppercase tracking-wider text-sm text-[#FCD116]">Contact</h4>
+              <div className="space-y-3 text-white/70 text-sm">
                 <p>📍 Cotonou, Bénin</p>
-                <p>📧 contact@alɔdó.bj</p>
+                <p>📧 contact@alodo.bj</p>
                 <p>📞 +229 01 00 00 00</p>
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-16 pt-8 text-center">
-            <p className="text-gray-500 font-sans">
-              © 2026 Alɔdó Project. Hackaton Bénin - Produits Financiers Innovants.
-            </p>
+
+          <div className="border-t border-white/10 mt-12 pt-8 text-center text-white/40 text-xs">
+            © 2026 Alɔdó Project — Hackaton Bénin · Produits Financiers Innovants pour les MPME
           </div>
         </div>
       </footer>
