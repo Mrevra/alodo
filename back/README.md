@@ -11,7 +11,11 @@ Ce projet est le backend de la solution Alodo, développée pour le hackathon. I
 - Node.js (v18 ou supérieur) installé sur votre machine.
 - Une base de données PostgreSQL ou utiliser la configuration Prisma prête.
 
-## 📦 Instructions d'installation et de lancement
+## 📦 Instructions de Déploiement Railway (Production)
+Ce projet est configuré pour être déployé **gratuitement et en 2 minutes sur Railway**.
+👉 **[Voir le Guide de Déploiement sur Railway](RAILWAY_DEPLOY.md)**
+
+## 📦 Instructions d'installation et de lancement (Local)
 
 1. **Installer les dépendances**
    ```bash

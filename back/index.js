@@ -24,6 +24,11 @@ app.get('/', (req, res) => {
     res.json({ message: 'Bienvenue sur l\'API Alodo (Backend Hackathon)' });
 });
 
+// Endpoint de test de santé (requis pour Railway)
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
 app.use('/transactions', transactionRoutes);
 const transactionController = require('./controllers/transactionController');
 app.get('/dashboard', transactionController.getDashboardStats);
@@ -38,6 +43,16 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Serveur Alodo démarré sur le port ${PORT}`);
+    console.log(`⚠️ Environnement : ${process.env.NODE_ENV || 'non défini'}`);
+});
+
+// Prévenir le crash total de l'application en cas d'erreur non gérée
+process.on('uncaughtException', (err) => {
+    console.error('Erreur non capturée (uncaughtException) :', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Rejet de promesse non géré (unhandledRejection) :', reason);
 });
