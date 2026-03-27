@@ -12,6 +12,9 @@ const fundingRoutes = require('./routes/fundingRoutes');
 const formalisationRoutes = require('./routes/formalisationRoutes');
 const translationRoutes = require('./routes/translationRoutes');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 const app = express();
 
 // Middlewares
@@ -20,6 +23,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.get('/', (req, res) => {
     res.json({ message: 'Bienvenue sur l\'API Alodo (Backend Hackathon)' });
 });

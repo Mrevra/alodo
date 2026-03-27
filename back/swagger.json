@@ -1,0 +1,242 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Alodo Backend API - Hackathon",
+        "version": "1.0.0",
+        "description": "API Backend développée pour le projet Alodo ciblant les MPME Béninoises."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Serveur Local"
+        },
+        {
+            "url": "https://alodo-production.up.railway.app",
+            "description": "Serveur de Production (Railway)"
+        }
+    ],
+    "paths": {
+        "/health": {
+            "get": {
+                "summary": "Healthcheck",
+                "description": "Vérifie si le serveur est en ligne.",
+                "responses": {
+                    "200": {
+                        "description": "Succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "post": {
+                "summary": "Créer une transaction",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "example": "VENTE",
+                                        "enum": [
+                                            "VENTE",
+                                            "ACHAT",
+                                            "DETTE",
+                                            "REMBOURSEMENT"
+                                        ]
+                                    },
+                                    "amount": {
+                                        "type": "number",
+                                        "example": 15000
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Vente de maïs"
+                                    },
+                                    "userId": {
+                                        "type": "string",
+                                        "example": "test-user-01"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction créée avec succès"
+                    }
+                }
+            },
+            "get": {
+                "summary": "Historique des transactions",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID de l'utilisateur"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des transactions de l'utilisateur."
+                    }
+                }
+            }
+        },
+        "/dashboard": {
+            "get": {
+                "summary": "Tableau de Bord",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "test-user-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Totaux et profit"
+                    }
+                }
+            }
+        },
+        "/score": {
+            "get": {
+                "summary": "Score Financier",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "test-user-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Score financier, niveau et recommandation."
+                    }
+                }
+            }
+        },
+        "/insights": {
+            "get": {
+                "summary": "Conseils Marché",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "test-user-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Conseils contextuels"
+                    }
+                }
+            }
+        },
+        "/funding-match": {
+            "get": {
+                "summary": "Matching Financement",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "test-user-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Institution suggérée et éligibilité"
+                    }
+                }
+            }
+        },
+        "/formalisation-status": {
+            "get": {
+                "summary": "Statut de Formalisation",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "userId",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "test-user-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "IFU / RCCM statuts"
+                    }
+                }
+            }
+        },
+        "/translate": {
+            "post": {
+                "summary": "Traduction Langue Locale",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "texte": {
+                                        "type": "string",
+                                        "example": "bonjour vente argent"
+                                    },
+                                    "langchainCible": {
+                                        "type": "string",
+                                        "example": "fon"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Texte traduit"
+                    }
+                }
+            }
+        }
+    }
+}
