@@ -68,10 +68,10 @@ export default function BoitierUI() {
   }, [supabase]);
 
   // Enregistrer une transaction
-  const saveTransaction = async (type: string, montant: number) => {
+  const saveTransaction = async (type: string, montant: number): Promise<boolean> => {
     if (!profileId) {
       console.error("Profil non trouvé");
-      return;
+      return false;
     }
 
     try {
