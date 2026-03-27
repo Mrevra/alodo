@@ -82,7 +82,7 @@ const sections = [
     description: "Les outils du quotidien",
     items: [
       {
-        href: "/vendeur/simple/boitier",
+        href: "/simple/boitier",
         title: "Boitier",
         text: "Calculatrice et transactions immédiates",
         icon: Calculator,
@@ -90,7 +90,7 @@ const sections = [
         color: colors.beninYellow,
       },
       {
-        href: "/vendeur/simple/historique",
+        href: "/simple/historique",
         title: "Historique",
         text: "Toutes vos transactions",
         icon: Clock3,
