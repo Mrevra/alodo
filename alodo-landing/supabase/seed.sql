@@ -1,1 +1,0 @@
--- Seed placeholder for alodo-platform

@@ -143,7 +143,7 @@ export default function PrestatairePage() {
                 <h2 style={{
                   fontSize: "20px",
                   fontWeight: 600,
-                  color: colors.gray800,
+                  color: colors.gray600,
                   marginBottom: "8px",
                 }}>
                   {module.title}
@@ -172,7 +172,7 @@ export default function PrestatairePage() {
           })}
         </div>
 
-        {/* Statistiques rapides - optionnelles */}
+        {/* Statistiques rapides */}
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
@@ -198,7 +198,7 @@ export default function PrestatairePage() {
           <div style={{ textAlign: "center" }}>
             <DollarSign size={20} color={colors.gray400} style={{ marginBottom: "8px" }} />
             <div style={{ fontSize: "24px", fontWeight: 600, color: colors.deepBlue }}>0 FCFA</div>
-            <div style={{ fontSize: "12px", color: colors.gray500 }}>Chiffre d'affaires</div>
+            <div style={{ fontSize: "12px", color: colors.gray500 }}>Chiffre d&apos;affaires</div>
           </div>
         </div>
       </div>
