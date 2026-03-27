@@ -1,0 +1,74 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-simulation",
+        "options": {}
+      },
+      "id": "e4a2d8b1-3c22-4d55-8a1a-9b8e7c6d5f4a",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const message = $node[\"Webhook\"].json[\"body\"][\"message\"];\nconst parts = message.split(\" \");\nconst type = parts[0].toUpperCase();\nconst montant = parseInt(parts[1]);\n\nreturn {\n  userId: \"user_test_benin_01\",\n  type: type === \"VENTE\" ? \"INCOME\" : \"EXPENSE\",\n  montant: montant,\n  description: \"Enregistré via WhatsApp Simulation\",\n  date: new Date().toISOString()\n};"
+      },
+      "id": "f5b3e9c2-4d33-5e66-9b2b-0c9f8d7e6f5b",
+      "name": "Parse Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://ton-backend-railway.app/transactions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"userId\": \"{{$node[\"Parse Message\"].json[\"userId\"]}}\",\n  \"type\": \"{{$node[\"Parse Message\"].json[\"type\"]}}\",\n  \"amount\": {{$node[\"Parse Message\"].json[\"montant\"]}},\n  \"description\": \"{{$node[\"Parse Message\"].json[\"description\"]}}\"\n}",
+        "options": {}
+      },
+      "id": "a6c4d0d3-5e44-6f77-ac3c-1d0e9f8a7b6c",
+      "name": "Call Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        650,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Message": {
+      "main": [
+        [
+          {
+            "node": "Call Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

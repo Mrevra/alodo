@@ -23,10 +23,17 @@ const getFormalisationStatus = async (userId) => {
         recommandation = 'La formalisation vous ouvre les portes du financement. Commencez par créer votre IFU gratuit en ligne.';
     }
 
+    const { translations } = require('./translationService');
+    
+    let textsKey = 'full';
+    if (!ifu && !rccm) textsKey = 'need_ifu';
+    else if (!ifu || !rccm) textsKey = 'need_ifu'; // simplifié pour la démo
+    
     return {
         ifu,
         rccm,
-        recommandation
+        recommandation,
+        texts: translations.formalisation[textsKey]
     };
 };
 

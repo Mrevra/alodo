@@ -1,23 +1,28 @@
+const { translations } = require('./translationService');
+
 const getInsights = async (userId) => {
-    // Simulation: En production, on utiliserait un moteur de règles 
-    // ou une IA connectée aux données sectorielles de l'utilisateur.
+    // Dans un vrai système, on choisirait l'insight selon le profil utilisateur.
+    // Ici on renvoie les clés de traduction pour que le front puisse choisir la langue.
 
     const insightsList = [
         {
-            messageMarche: 'Le prix du maïs augmente sur le marché de Dantokpa cette semaine.',
-            recommandationAdaptee: 'Vous devriez peut-être mettre à jour vos prix de vente ou faire du stock.'
+            key: 'maize_rising',
+            type: 'MARKET_ALERT',
+            texts: translations.insights.maize_rising
         },
         {
-            messageMarche: 'La demande pour les services de livraison est en forte hausse avec la fin d\'année.',
-            recommandationAdaptee: 'Pensez à proposer un service de livraison à vos clients habituels.'
+            key: 'palm_oil_hot',
+            type: 'OPPORTUNITY',
+            texts: translations.insights.palm_oil_hot
         },
         {
-            messageMarche: 'Les taux de micro-crédits sont actuellement favorables pour les artisans.',
-            recommandationAdaptee: 'C\'est le bon moment de demander un financement pour acheter de nouveaux équipements.'
+            key: 'alafia_credit',
+            type: 'FINANCIAL_TIP',
+            texts: translations.insights.alafia_credit
         }
     ];
 
-    // Return a random insight for the hackathon demo
+    // Renvoie un insight au hasard pour la démo
     const randomIndex = Math.floor(Math.random() * insightsList.length);
     return insightsList[randomIndex];
 };

@@ -24,11 +24,14 @@ const getFundingMatch = async (userId) => {
         institution = 'Alodo Academy'; // Needs training before funding
     }
 
+    const { translations } = require('./translationService');
+    
     return {
         eligible,
         montantEstime,
         typeFinancement: type,
         institutionSuggeree: institution,
+        texts: eligible ? (montantEstime > 200000 ? translations.funding.eligible_high : translations.funding.eligible_micro) : translations.funding.need_training,
         scoreUtilise: scoreData.score
     };
 };
