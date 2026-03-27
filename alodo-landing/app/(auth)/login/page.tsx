@@ -52,7 +52,7 @@ export default function LoginPage() {
 
       if (signInError) throw signInError;
 
-      router.replace("/dashboard");
+      router.replace("/vendeur");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Connexion impossible.");
     } finally {
@@ -237,9 +237,7 @@ export default function LoginPage() {
                   color: colors.white,
                   letterSpacing: "-0.02em",
                 }}>Alɔdó</span>
-                <span style={{ display: "block", fontSize: "12px", color: "rgba(255,255,255,0.7)" }}>
-                  Terminal sécurisé
-                </span>
+               
               </div>
             </div>
 
