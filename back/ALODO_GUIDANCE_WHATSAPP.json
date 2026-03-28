@@ -1,0 +1,101 @@
+{
+  "name": "ALODO - WhatsApp Guidance Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alodo-guidance-whatsapp",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-wa",
+      "name": "Webhook WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 240]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://gnmygxtgwhndetnoggmw.supabase.co/rest/v1/profiles?whatsapp_number=eq.{{ $json.body.from }}&select=id,first_name,type",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "TOKEN" },
+            { "name": "Authorization", "value": "Bearer TOKEN" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-profile-wa",
+      "name": "Check WhatsApp Profile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "16dSyMd6IZJ6cELY5kxIAgnwVoLAITkToUfkq-GQI7xE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "faq_guidance",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "read-knowledge",
+      "name": "Read Knowledge",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [440, 240]
+    },
+    {
+      "parameters": {
+        "text": "={{ $node[\"Webhook WhatsApp\"].json.body.message }}",
+        "options": {
+          "systemMessage": "=Tu es l'assistant WhatsApp Alodo. Tu aides {{ $node[\"Check WhatsApp Profile\"].json[0].first_name }} à formaliser son entreprise.\n\nCONNAISSANCES :\n{{ JSON.stringify($node[\"Read Knowledge\"].data) }}\n\nCONSIGNES :\n1. Réponse courte et mobile-friendly.\n2. Ne demande jamais d'upload."
+        }
+      },
+      "id": "ai-agent-wa",
+      "name": "AI WhatsApp Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [660, 240]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "model-wa",
+      "name": "OpenAI Model WhatsApp",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [660, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"reply\": {{ JSON.stringify($json.output) }}\n}",
+        "options": {}
+      },
+      "id": "respond-wa",
+      "name": "Respond to WhatsApp",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 240]
+    }
+  ],
+  "connections": {
+    "Webhook WhatsApp": { "main": [[ { "node": "Check WhatsApp Profile", "type": "main", "index": 0 } ]] },
+    "Check WhatsApp Profile": { "main": [[ { "node": "Read Knowledge", "type": "main", "index": 0 } ]] },
+    "Read Knowledge": { "main": [[ { "node": "AI WhatsApp Agent", "type": "main", "index": 0 } ]] },
+    "AI WhatsApp Agent": { "main": [[ { "node": "Respond to WhatsApp", "type": "main", "index": 0 } ]] },
+    "OpenAI Model WhatsApp": { "ai_languageModel": [[ { "node": "AI WhatsApp Agent", "type": "ai_languageModel", "index": 0 } ]] }
+  }
+}

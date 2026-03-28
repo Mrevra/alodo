@@ -1,0 +1,100 @@
+{
+  "name": "ALODO - Web Guidance Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alodo-guidance-web",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-web",
+      "name": "Webhook Web",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 240]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://gnmygxtgwhndetnoggmw.supabase.co/rest/v1/profiles?id=eq.{{ $json.body.user_id }}&select=id,first_name",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "TOKEN" },
+            { "name": "Authorization", "value": "Bearer TOKEN" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-profile-web",
+      "name": "Get Profile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "16dSyMd6IZJ6cELY5kxIAgnwVoLAITkToUfkq-GQI7xE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "faq_guidance",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "read-knowledge",
+      "name": "Read Knowledge",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [440, 240]
+    },
+    {
+      "parameters": {
+        "text": "={{ $node[\"Webhook Web\"].json.body.message }}",
+        "options": {
+          "systemMessage": "=Tu es l'assistant Web Alodo. Tu aides {{ $node[\"Get Profile\"].json[0].first_name }} sur le dashboard.\n\nCONNAISSANCES :\n{{ JSON.stringify($node[\"Read Knowledge\"].data) }}\n\nCONSIGNES :\n1. Réponse détaillée et structurée.\n2. Ne demande jamais d'upload."
+        }
+      },
+      "id": "ai-agent-web",
+      "name": "AI Web Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [660, 240]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "model-web",
+      "name": "OpenAI Model Web",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [660, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "allContext",
+        "options": {}
+      },
+      "id": "respond-web",
+      "name": "Respond to Web",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 240]
+    }
+  ],
+  "connections": {
+    "Webhook Web": { "main": [[ { "node": "Get Profile", "type": "main", "index": 0 } ]] },
+    "Get Profile": { "main": [[ { "node": "Read Knowledge", "type": "main", "index": 0 } ]] },
+    "Read Knowledge": { "main": [[ { "node": "AI Web Agent", "type": "main", "index": 0 } ]] },
+    "AI Web Agent": { "main": [[ { "node": "Respond to Web", "type": "main", "index": 0 } ]] },
+    "OpenAI Model Web": { "ai_languageModel": [[ { "node": "AI Web Agent", "type": "ai_languageModel", "index": 0 } ]] }
+  }
+}

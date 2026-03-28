@@ -1,0 +1,93 @@
+{
+  "name": "ALODO - Transaction Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alodo-transaction",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-tx",
+      "name": "Webhook WaChap",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 240]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://gnmygxtgwhndetnoggmw.supabase.co/rest/v1/profiles?phone=eq.{{ $json.body.phone }}&select=id,first_name",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "TOKEN" },
+            { "name": "Authorization", "value": "Bearer TOKEN" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-user",
+      "name": "Check User",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $node[\"Webhook WaChap\"].json.body;\nconst action = body.action || \"ADVICE\";\nconst amount = parseInt(body.message.replace(/[^0-9]/g, '')) || 0;\nreturn { action, amount };"
+      },
+      "id": "logic",
+      "name": "Logic & Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gnmygxtgwhndetnoggmw.supabase.co/rest/v1/transactions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "TOKEN" },
+            { "name": "Authorization", "value": "Bearer TOKEN" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "user_id", "value": "={{ $node[\"Check User\"].json[0].id }}" },
+            { "name": "type", "value": "={{ $node[\"Logic & Intent\"].json.action }}" },
+            { "name": "amount", "value": "={{ $node[\"Logic & Intent\"].json.amount }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "insert-tx",
+      "name": "Insert Transaction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 240]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"reply\": \"✅ Enregistré avec succès !\"\n}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond to WhatsApp",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 240]
+    }
+  ],
+  "connections": {
+    "Webhook WaChap": { "main": [[ { "node": "Check User", "type": "main", "index": 0 } ]] },
+    "Check User": { "main": [[ { "node": "Logic & Intent", "type": "main", "index": 0 } ]] },
+    "Logic & Intent": { "main": [[ { "node": "Insert Transaction", "type": "main", "index": 0 } ]] },
+    "Insert Transaction": { "main": [[ { "node": "Respond to WhatsApp", "type": "main", "index": 0 } ]] }
+  }
+}

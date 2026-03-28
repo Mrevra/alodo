@@ -1,0 +1,80 @@
+{
+  "name": "ALODO - Voice Guidance Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "alodo-guidance-voice",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-voice",
+      "name": "Webhook Voice",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 240]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "16dSyMd6IZJ6cELY5kxIAgnwVoLAITkToUfkq-GQI7xE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "faq_guidance",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "read-knowledge",
+      "name": "Read Knowledge",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "text": "={{ $node[\"Webhook Voice\"].json.body.transcription }}",
+        "options": {
+          "systemMessage": "Tu es l'assistant vocal d'Alodo. Réponds de façon très courte (max 2 phrases).\n\nCONNAISSANCES :\n{{ JSON.stringify($node[\"Read Knowledge\"].data) }}\n\nCONSIGNES :\n1. Si l'action est complexe, dis d'utiliser WhatsApp ou le site Alodo."
+        }
+      },
+      "id": "ai-voice",
+      "name": "AI Voice Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [440, 240]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "model-voice",
+      "name": "Model Voice",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [440, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "allContext",
+        "options": {}
+      },
+      "id": "respond-voice",
+      "name": "Respond to Voice",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 240]
+    }
+  ],
+  "connections": {
+    "Webhook Voice": { "main": [[ { "node": "Read Knowledge", "type": "main", "index": 0 } ]] },
+    "Read Knowledge": { "main": [[ { "node": "AI Voice Agent", "type": "main", "index": 0 } ]] },
+    "AI Voice Agent": { "main": [[ { "node": "Respond to Voice", "type": "main", "index": 0 } ]] },
+    "Model Voice": { "ai_languageModel": [[ { "node": "AI Voice Agent", "type": "ai_languageModel", "index": 0 } ]] }
+  }
+}

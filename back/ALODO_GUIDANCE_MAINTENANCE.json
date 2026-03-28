@@ -1,0 +1,53 @@
+{
+  "name": "ALODO - Knowledge Maintenance",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "hours" }
+          ]
+        }
+      },
+      "id": "cron-maintenance",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1.1,
+      "position": [0, 240]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "16dSyMd6IZJ6cELY5kxIAgnwVoLAITkToUfkq-GQI7xE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "government_processes",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "read-processes",
+      "name": "Read Processes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst errors = [];\nitems.forEach(item => {\n  if (!item.json.process_name_fr || !item.json.step_1_fr) {\n    errors.push({ error: `Fiche incomplète : ${item.json.process_key}` });\n  }\n});\nreturn errors;"
+      },
+      "id": "check-logic",
+      "name": "Identify Empty Shells",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 240]
+    }
+  ],
+  "connections": {
+    "Every Hour": { "main": [[ { "node": "Read Processes", "type": "main", "index": 0 } ]] },
+    "Read Processes": { "main": [[ { "node": "Identify Empty Shells", "type": "main", "index": 0 } ]] }
+  }
+}
