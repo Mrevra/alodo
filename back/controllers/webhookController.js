@@ -1,65 +1,81 @@
 const geminiService = require('../services/geminiService');
 const transactionService = require('../services/transactionService');
 const scoreService = require('../services/scoreService');
+const axios = require('axios');
+
+const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL;
+const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
+
+// 🧩 STEP 4 — SEND RESPONSE VIA EVOLUTION API
+const sendWhatsAppReply = async (phone, responseText) => {
+    try {
+        if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY) {
+            console.error("Missing EVOLUTION_API_URL or EVOLUTION_API_KEY in .env");
+            return;
+        }
+
+        const url = EVOLUTION_API_URL.endsWith('/')
+            ? `${EVOLUTION_API_URL}message/sendText`
+            : `${EVOLUTION_API_URL}/message/sendText`;
+
+        await axios.post(url, {
+            number: phone,
+            text: responseText
+        }, {
+            headers: {
+                'Authorization': `Bearer ${EVOLUTION_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log(`Reply sent to ${phone} successfully`);
+    } catch (error) {
+        console.error("Evolution API Target Error:", error.response?.data || error.message);
+    }
+};
 
 const handleWhatsAppMessage = async (req, res, next) => {
-    // 1. Intelligent Logging (CRITICAL)
-    console.log("Incoming request:", JSON.stringify(req.body, null, 2));
+    // 🧩 STEP 6 — LOGGING
+    console.log("Incoming webhook:", JSON.stringify(req.body, null, 2));
 
     try {
         const raw = req.body || {};
 
-        // 2. Flexible Input Parsing
-        let phone =
-            raw.phone ||
-            raw.sender ||
-            (raw.data?.key?.remoteJid?.split("@")[0]) ||
-            "unknown_user";
+        // 🧩 STEP 2 — ROBUST EXTRACTION
+        let phone = raw?.data?.key?.remoteJid?.split("@")[0] || "unknown_user";
 
         let message =
-            raw.message ||
-            raw.text ||
-            raw.data?.message?.conversation ||
-            raw.data?.message?.extendedTextMessage?.text ||
-            raw.data?.message?.imageMessage?.caption ||
+            raw?.data?.message?.conversation ||
+            raw?.data?.message?.extendedTextMessage?.text ||
             "";
 
-        // Nettoyage des données pour la propreté (si ça vient brut d'Evolution API)
-        if (typeof phone === 'string') {
-            phone = phone.replace('@s.whatsapp.net', '').replace('@c.us', '').trim();
-        }
-        if (typeof message === 'string') {
-            message = message.trim();
+        // 🧩 STEP 1 — FILTER EVENTS (Ignore empty messages)
+        if (!message || message.trim() === "") {
+            return res.status(200).send("OK: No message content to process");
         }
 
-        // 3. Remove Hard Failures (Fallback si pas de message)
-        if (!message) {
-            return res.status(200).json({
-                reply: "Salut ! 👋 Je suis l'assistant financier Alodo. Dis-moi par exemple : 'J'ai vendu pour 5000' ou 'Quel est mon bilan ?'",
-                response: "Salut ! 👋 Je suis l'assistant financier Alodo. Dis-moi par exemple : 'J'ai vendu pour 5000' ou 'Quel est mon bilan ?'"
-            });
-        }
+        // Nettoyage rapide
+        message = message.trim();
 
-        // Détection de l'intention
+        let finalResponse = "";
+
+        // 🧩 STEP 3 — PROCESS MESSAGE
         const { intent, amount } = await geminiService.processMessageIntent(message);
 
         let resultData = {};
         let actionContext = '';
 
-        // Logique Métier
         switch (intent) {
             case 'VENTE':
             case 'ACHAT':
             case 'DETTE':
                 if (!amount) {
-                    return res.status(200).json({
-                        reply: "Je n'ai pas compris le montant. Peux-tu reformuler avec un chiffre exact ?",
-                        response: "Je n'ai pas compris le montant. Peux-tu reformuler avec un chiffre exact ?"
-                    });
+                    finalResponse = "Je n'ai pas compris le montant. Peux-tu reformuler avec un chiffre exact ?";
+                } else {
+                    await transactionService.recordTransaction(phone, intent, amount);
+                    resultData = await transactionService.getEngineStats(phone);
+                    actionContext = `Tu confirmes l'enregistrement de ${amount} FCFA pour ${intent}. Donne le profit total actuel.`;
                 }
-                await transactionService.recordTransaction(phone, intent, amount);
-                resultData = await transactionService.getEngineStats(phone);
-                actionContext = `Tu confirmes l'enregistrement de ${amount} FCFA pour ${intent}. Donne le profit total actuel.`;
                 break;
 
             case 'SCORE':
@@ -77,29 +93,26 @@ const handleWhatsAppMessage = async (req, res, next) => {
                 break;
 
             default:
-                // 4. Safe Defaults si incompris
-                return res.status(200).json({
-                    reply: "Je n'ai pas bien compris. Essayez par exemple: 'j'ai vendu 5000'",
-                    response: "Je n'ai pas bien compris. Essayez par exemple: 'j'ai vendu 5000'"
-                });
+                finalResponse = "Je n'ai pas bien compris. Essayez par exemple : 'J'ai vendu pour 5000'";
         }
 
-        const finalResponse = await geminiService.generateResponseTemplate(actionContext, resultData);
+        // Generation de reponse dynamique si non fixée
+        if (!finalResponse) {
+            finalResponse = await geminiService.generateResponseTemplate(actionContext, resultData);
+        }
 
-        // 5. Always Return a Response (200 OK avec fallback 'reply')
-        res.status(200).json({
-            reply: finalResponse,
-            response: finalResponse // Pour rétro-compatibilité n8n
-        });
+        // Repondre asynchronement à Whatsapp
+        if (phone !== "unknown_user") {
+            await sendWhatsAppReply(phone, finalResponse);
+        }
+
+        // 🧩 STEP 7 — RESPONSE FORMAT (Simple 200 OK to webhook)
+        return res.status(200).json({ status: "success" });
 
     } catch (error) {
-        // Global Try/Catch Protection
+        // 🧩 STEP 5 — FAIL SAFE
         console.error("Webhook Execution Error:", error);
-
-        res.status(200).json({
-            reply: "⚠️ Une erreur est survenue, veuillez réessayer.",
-            response: "⚠️ Une erreur est survenue, veuillez réessayer."
-        });
+        return res.status(200).json({ status: "fail-safe ok" });
     }
 };
 
