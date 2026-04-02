@@ -3,27 +3,58 @@ const transactionService = require('../services/transactionService');
 const scoreService = require('../services/scoreService');
 
 const handleWhatsAppMessage = async (req, res, next) => {
-    try {
-        const { phone, message } = req.body;
+    // 1. Intelligent Logging (CRITICAL)
+    console.log("Incoming request:", JSON.stringify(req.body, null, 2));
 
-        if (!phone || !message) {
-            return res.status(400).json({ error: 'phone et message sont requis' });
+    try {
+        const raw = req.body || {};
+
+        // 2. Flexible Input Parsing
+        let phone =
+            raw.phone ||
+            raw.sender ||
+            (raw.data?.key?.remoteJid?.split("@")[0]) ||
+            "unknown_user";
+
+        let message =
+            raw.message ||
+            raw.text ||
+            raw.data?.message?.conversation ||
+            raw.data?.message?.extendedTextMessage?.text ||
+            raw.data?.message?.imageMessage?.caption ||
+            "";
+
+        // Nettoyage des données pour la propreté (si ça vient brut d'Evolution API)
+        if (typeof phone === 'string') {
+            phone = phone.replace('@s.whatsapp.net', '').replace('@c.us', '').trim();
+        }
+        if (typeof message === 'string') {
+            message = message.trim();
         }
 
-        // 1. Détecter l'intention via Gemini
+        // 3. Remove Hard Failures (Fallback si pas de message)
+        if (!message) {
+            return res.status(200).json({
+                reply: "Salut ! 👋 Je suis l'assistant financier Alodo. Dis-moi par exemple : 'J'ai vendu pour 5000' ou 'Quel est mon bilan ?'",
+                response: "Salut ! 👋 Je suis l'assistant financier Alodo. Dis-moi par exemple : 'J'ai vendu pour 5000' ou 'Quel est mon bilan ?'"
+            });
+        }
+
+        // Détection de l'intention
         const { intent, amount } = await geminiService.processMessageIntent(message);
 
         let resultData = {};
         let actionContext = '';
 
-        // 2. Router la logique métier
+        // Logique Métier
         switch (intent) {
             case 'VENTE':
             case 'ACHAT':
             case 'DETTE':
                 if (!amount) {
                     return res.status(200).json({
-                        response: "Je n'ai pas compris le montant. Veux-tu me le redire ?"
+                        reply: "Je n'ai pas compris le montant. Peux-tu reformuler avec un chiffre exact ?",
+                        response: "Je n'ai pas compris le montant. Peux-tu reformuler avec un chiffre exact ?"
                     });
                 }
                 await transactionService.recordTransaction(phone, intent, amount);
@@ -46,20 +77,29 @@ const handleWhatsAppMessage = async (req, res, next) => {
                 break;
 
             default:
+                // 4. Safe Defaults si incompris
                 return res.status(200).json({
-                    response: "Je suis ton assistant financier. Dis-moi si tu as vendu, acheté, ou si tu veux ton score !"
+                    reply: "Je n'ai pas bien compris. Essayez par exemple: 'j'ai vendu 5000'",
+                    response: "Je n'ai pas bien compris. Essayez par exemple: 'j'ai vendu 5000'"
                 });
         }
 
-        // 3. Générer la réponse naturelle via Gemini
         const finalResponse = await geminiService.generateResponseTemplate(actionContext, resultData);
 
-        // 4. Retourner la réponse formattée pour WhatsApp (n8n la transmettra)
-        res.status(200).json({ response: finalResponse });
+        // 5. Always Return a Response (200 OK avec fallback 'reply')
+        res.status(200).json({
+            reply: finalResponse,
+            response: finalResponse // Pour rétro-compatibilité n8n
+        });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
+        // Global Try/Catch Protection
+        console.error("Webhook Execution Error:", error);
+
+        res.status(200).json({
+            reply: "⚠️ Une erreur est survenue, veuillez réessayer.",
+            response: "⚠️ Une erreur est survenue, veuillez réessayer."
+        });
     }
 };
 
