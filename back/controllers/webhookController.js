@@ -8,10 +8,10 @@ const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
 const EVOLUTION_INSTANCE_NAME = process.env.EVOLUTION_INSTANCE_NAME;
 
 // 🧩 STEP 4 — SEND RESPONSE VIA EVOLUTION API
-const sendWhatsAppReply = async (phone, responseText) => {
+const sendWhatsAppReply = async (phone, responseText, apiKey, instanceName) => {
     try {
-        if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY || !EVOLUTION_INSTANCE_NAME) {
-            console.error("Missing EVOLUTION_API_URL, EVOLUTION_API_KEY or EVOLUTION_INSTANCE_NAME in .env");
+        if (!EVOLUTION_API_URL || !apiKey || !instanceName) {
+            console.error("Missing EVOLUTION_API_URL, EVOLUTION_API_KEY or EVOLUTION_INSTANCE_NAME.");
             return;
         }
 
@@ -19,14 +19,15 @@ const sendWhatsAppReply = async (phone, responseText) => {
             ? EVOLUTION_API_URL.slice(0, -1)
             : EVOLUTION_API_URL;
 
-        const url = `${baseUrl}/message/sendText/${EVOLUTION_INSTANCE_NAME}`;
+        const url = `${baseUrl}/message/sendText/${instanceName}`;
 
         await axios.post(url, {
             number: phone,
             text: responseText
         }, {
             headers: {
-                'Authorization': `Bearer ${EVOLUTION_API_KEY}`,
+                'apikey': apiKey,
+                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -43,6 +44,10 @@ const handleWhatsAppMessage = async (req, res, next) => {
 
     try {
         const raw = req.body || {};
+
+        // 🧩 DYNAMIC EXTRACTION OF API KEY AND INSTANCE
+        let dynamicApiKey = raw?.apikey || EVOLUTION_API_KEY;
+        let dynamicInstance = raw?.instance || EVOLUTION_INSTANCE_NAME;
 
         // 🧩 STEP 2 — ROBUST EXTRACTION
         let phone = raw?.data?.key?.remoteJid?.split("@")[0] || "unknown_user";
@@ -106,7 +111,7 @@ const handleWhatsAppMessage = async (req, res, next) => {
 
         // Repondre asynchronement à Whatsapp
         if (phone !== "unknown_user") {
-            await sendWhatsAppReply(phone, finalResponse);
+            await sendWhatsAppReply(phone, finalResponse, dynamicApiKey, dynamicInstance);
         }
 
         // 🧩 STEP 7 — RESPONSE FORMAT (Simple 200 OK to webhook)
