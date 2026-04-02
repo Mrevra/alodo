@@ -7,6 +7,9 @@ const errorHandler = require('./middlewares/error');
 // Routes will be imported here
 const webhookRoutes = require('./routes/webhookRoutes');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 const app = express();
 
 // Middlewares
@@ -15,6 +18,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });

@@ -1,0 +1,82 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Alodo WhatsApp AI - Interagissez avec votre Assistant",
+        "version": "2.0.0",
+        "description": "Faites des tests directement ici comme si vous étiez sur WhatsApp ! Saisissez votre numéro et envoyez un message naturel."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Serveur Local"
+        },
+        {
+            "url": "https://alodo-production.up.railway.app",
+            "description": "Serveur de Production (Railway)"
+        }
+    ],
+    "paths": {
+        "/webhook": {
+            "post": {
+                "summary": "Envoyer un message à l'IA WhatsApp",
+                "description": "Cet endpoint est appelé par n8n lorsque vous envoyez un message WhatsApp. Testez-le ici avec les exemples en dessous.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "description": "Votre numéro de téléphone servant d'identifiant unique.",
+                                        "default": "22960000000"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "description": "Le message naturel."
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "Vente": {
+                                    "summary": "Exemple d'une vente",
+                                    "value": {
+                                        "phone": "22960000000",
+                                        "message": "j'ai vendu des chaussures pour 15000"
+                                    }
+                                },
+                                "Achat (Dépense)": {
+                                    "summary": "Exemple d'un achat",
+                                    "value": {
+                                        "phone": "22960000000",
+                                        "message": "j'ai depensé 5000 en marchandise"
+                                    }
+                                },
+                                "Bilan / Score": {
+                                    "summary": "Demande de score",
+                                    "value": {
+                                        "phone": "22960000000",
+                                        "message": "quel est mon bilan ?"
+                                    }
+                                },
+                                "Financement": {
+                                    "summary": "Demande de crédit",
+                                    "value": {
+                                        "phone": "22960000000",
+                                        "message": "je veux un crédit pour mon business"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La réponse texte générée par Gemini qui sera renvoyée sur WhatsApp."
+                    }
+                }
+            }
+        }
+    }
+}
