@@ -5,18 +5,21 @@ const axios = require('axios');
 
 const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL;
 const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY;
+const EVOLUTION_INSTANCE_NAME = process.env.EVOLUTION_INSTANCE_NAME;
 
 // 🧩 STEP 4 — SEND RESPONSE VIA EVOLUTION API
 const sendWhatsAppReply = async (phone, responseText) => {
     try {
-        if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY) {
-            console.error("Missing EVOLUTION_API_URL or EVOLUTION_API_KEY in .env");
+        if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY || !EVOLUTION_INSTANCE_NAME) {
+            console.error("Missing EVOLUTION_API_URL, EVOLUTION_API_KEY or EVOLUTION_INSTANCE_NAME in .env");
             return;
         }
 
-        const url = EVOLUTION_API_URL.endsWith('/')
-            ? `${EVOLUTION_API_URL}message/sendText`
-            : `${EVOLUTION_API_URL}/message/sendText`;
+        const baseUrl = EVOLUTION_API_URL.endsWith('/')
+            ? EVOLUTION_API_URL.slice(0, -1)
+            : EVOLUTION_API_URL;
+
+        const url = `${baseUrl}/message/sendText/${EVOLUTION_INSTANCE_NAME}`;
 
         await axios.post(url, {
             number: phone,
