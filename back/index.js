@@ -5,15 +5,7 @@ require('dotenv').config();
 
 const errorHandler = require('./middlewares/error');
 // Routes will be imported here
-const transactionRoutes = require('./routes/transactionRoutes');
-const scoreRoutes = require('./routes/scoreRoutes');
-const insightRoutes = require('./routes/insightRoutes');
-const fundingRoutes = require('./routes/fundingRoutes');
-const formalisationRoutes = require('./routes/formalisationRoutes');
-const translationRoutes = require('./routes/translationRoutes');
-
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+const webhookRoutes = require('./routes/webhookRoutes');
 
 const app = express();
 
@@ -23,25 +15,12 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-app.get('/', (req, res) => {
-    res.json({ message: 'Bienvenue sur l\'API Alodo (Backend Hackathon)' });
-});
-
-// Endpoint de test de santé (requis pour Railway)
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-app.use('/transactions', transactionRoutes);
-const transactionController = require('./controllers/transactionController');
-app.get('/dashboard', transactionController.getDashboardStats);
-app.use('/score', scoreRoutes);
-app.use('/insights', insightRoutes);
-app.use('/funding-match', fundingRoutes);
-app.use('/formalisation-status', formalisationRoutes);
-app.use('/translate', translationRoutes);
+// Main Webhook Route for n8n/WhatsApp
+app.use('/webhook', webhookRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);

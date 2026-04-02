@@ -9,10 +9,6 @@ datasource db {
 model User {
   id           String        @id @default(uuid())
   phone        String        @unique
-  name         String
-  businessName String?
-  ifu          Boolean       @default(false)
-  rccm         Boolean       @default(false)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   transactions Transaction[]

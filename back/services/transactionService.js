@@ -1,85 +1,46 @@
 const prisma = require('../prisma');
 
-const createTransaction = async (data) => {
-    const { type, amount, description, userId } = data;
-
-    // Verification simple
-    if (!type || !amount || !userId) {
-        const error = new Error('type, amount, et userId sont requis');
-        error.status = 400;
-        throw error;
-    }
-
-    // Create user info if it doesn't exist (Simulation for hackathon)
-    let user = await prisma.user.findUnique({ where: { id: userId } });
+const recordTransaction = async (phone, type, amount) => {
+    // Find or create user via phone number
+    let user = await prisma.user.findUnique({ where: { phone } });
     if (!user) {
-        // We create a dummy user
-        user = await prisma.user.create({
-            data: {
-                id: userId,
-                phone: 'Simulated_' + Math.random().toString().slice(2, 10),
-                name: 'Utilisateur ' + userId,
-            }
-        });
+        user = await prisma.user.create({ data: { phone } });
     }
 
-    return await prisma.transaction.create({
+    // Record the transaction
+    await prisma.transaction.create({
         data: {
             type,
             amount: parseFloat(amount),
-            description,
-            userId,
+            userId: user.id,
         },
     });
 };
 
-const getTransactionsByUser = async (userId) => {
-    return await prisma.transaction.findMany({
-        where: { userId },
-        orderBy: { date: 'desc' },
-    });
-};
+const getEngineStats = async (phone) => {
+    const user = await prisma.user.findUnique({ where: { phone } });
+    if (!user) return { totalVentes: 0, totalDepenses: 0, profit: 0, dettes: 0 };
 
-const getDashboardStats = async (userId) => {
     const transactions = await prisma.transaction.findMany({
-        where: { userId },
+        where: { userId: user.id },
     });
 
     let totalVentes = 0;
-    let totalAchats = 0;
-    let totalDettes = 0;
-    let totalRemboursements = 0;
+    let totalDepenses = 0;
+    let dettes = 0;
 
     transactions.forEach((t) => {
-        switch (t.type) {
-            case 'VENTE':
-                totalVentes += t.amount;
-                break;
-            case 'ACHAT':
-                totalAchats += t.amount;
-                break;
-            case 'DETTE':
-                totalDettes += t.amount;
-                break;
-            case 'REMBOURSEMENT':
-                totalRemboursements += t.amount;
-                break;
-        }
+        if (t.type === 'VENTE') totalVentes += t.amount;
+        if (t.type === 'ACHAT') totalDepenses += t.amount;
+        if (t.type === 'DETTE') dettes += t.amount;
     });
 
-    const profit = totalVentes - totalAchats;
-    const dettesEnCours = totalDettes - totalRemboursements;
+    const profit = totalVentes - totalDepenses;
 
-    return {
-        totalVentes,
-        totalDepenses: totalAchats,
-        profit,
-        dettesEnCours,
-    };
+    return { totalVentes, totalDepenses, profit, dettes };
 };
 
 module.exports = {
-    createTransaction,
-    getTransactionsByUser,
-    getDashboardStats,
+    recordTransaction,
+    getEngineStats
 };
