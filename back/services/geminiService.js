@@ -33,7 +33,7 @@ Retourne UNIQUEMENT un objet JSON (sans retour à la ligne et sans markdown) au 
             }
         });
 
-        const text = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+        const text = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
         return JSON.parse(text);
     } catch (error) {
         console.error("Gemini Error:", error);
@@ -59,7 +59,7 @@ Rédige une courte réponse WhatsApp adaptée. Utilise des emojis simples.`;
                 temperature: 0.7,
             }
         });
-        return response.text().trim();
+        return response.text.trim();
     } catch (error) {
         return "C'est noté !";
     }
